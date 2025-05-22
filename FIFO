@@ -1,0 +1,67 @@
+`timescale 1ns / 1ps
+//////////////////////////////////////////////////////////////////////////////////
+// Company: IIT Mandi
+// Engineer: FIFO
+// 
+// Create Date: 15.04.2024 14:56:23
+// Design Name: 
+// Module Name: fifo
+// Project Name: 
+// Target Devices: 
+// Tool Versions: 
+// Description: 
+// 
+// Dependencies: 
+// 
+// Revision:
+// Revision 0.01 - File Created
+// Additional Comments:
+// 
+//////////////////////////////////////////////////////////////////////////////////
+
+
+module fifo(
+input clk,
+input rst,
+input [6:0] i_data,
+input i_data_valid,
+input i_rd_valid,
+output [6:0] out
+
+    );
+
+//reg i_rd_valid;
+reg [6:0] line [0:3];    
+reg [2:0] wrPntr;
+reg[1:0] rdPntr;
+
+    
+    always@(posedge clk) begin
+        if(i_data_valid)
+            line[wrPntr] <= i_data;
+        
+    end
+    
+    always@(posedge clk) begin
+        if(rst) begin
+            wrPntr <= 0;
+        end else
+        if (i_data_valid) begin
+            wrPntr <= wrPntr + 1;
+        end
+    end
+    
+    
+    always@(posedge clk) begin
+        if(rst)
+        rdPntr <= 0;
+        else if (i_rd_valid)
+        rdPntr <= rdPntr + 1;
+    end
+    
+    assign out = line[rdPntr];
+
+    
+    assign i_data_valid = (wrPntr == 3'b100) ? 0 : 1;
+    //assign out = (rdPntr == 2'b11) ? 0 : line[rdPntr];
+endmodule
