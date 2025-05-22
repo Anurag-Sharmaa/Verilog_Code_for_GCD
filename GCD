@@ -1,0 +1,114 @@
+`timescale 1ns / 1ps
+//////////////////////////////////////////////////////////////////////////////////
+// Company: IIT Mandi
+// Engineer: Anurag Sharma
+// 
+// Create Date: 13.04.2024 10:33:10
+// Design Name: 
+// Module Name: gcd
+// Project Name: 
+// Target Devices: 
+// Tool Versions: 
+// Description: 
+// 
+// Dependencies: 
+// 
+// Revision:
+// Revision 0.01 - File Created
+// Additional Comments:
+// 
+//////////////////////////////////////////////////////////////////////////////////
+
+module gcd(
+input clk,
+input rst,
+input start,
+input [6:0]x,
+input [6:0]y,
+output reg [6:0] result
+
+    );
+    
+    
+    reg start_reg;
+    reg [6:0] new_x;
+  
+    reg [6:0] new_y;
+    wire [6:0] mux_x;
+    wire [6:0] mux_y;
+    
+    reg [6:0] reg_x;
+    reg [6:0] reg_y;
+    reg [6:0] sub1;
+    reg [6:0] mux_comp_x;
+    reg [6:0] mux_comp_y;
+    reg done;
+    
+    
+    
+//    assign mux_x = start ? new_x : x;
+//    assign mux_y = start ? new_y : y;
+//    assign start = start_reg;
+    
+    always@(posedge clk ) begin
+        if(rst) begin
+            reg_x <= 0;
+        end else
+        reg_x <= x;
+    end
+    
+    always@(posedge clk) begin
+        if(rst) begin
+            reg_y <= 0;
+        end else
+        reg_y <= y;
+    end
+    
+    always@(posedge clk) begin
+        sub1 = reg_x - reg_y;
+    end
+    
+    always@(posedge clk) begin
+        if(reg_x >= reg_y) begin
+            mux_comp_x <= sub1;
+        end else
+        if (reg_x < reg_y) begin
+            mux_comp_x <= reg_y;
+        end
+    end
+    
+    always@(posedge clk) begin
+        if(reg_x >= reg_y) begin
+            mux_comp_y <= reg_y;
+        end else
+        if (reg_x < reg_y) begin
+            mux_comp_y <= reg_x;
+        end
+    end
+    
+    always@(posedge clk) begin
+        if(reg_y == 0) begin
+           done <= 1; 
+            result = reg_x;
+        end else
+        if(reg_y != 0) begin
+           done <= 0;
+        end
+    end
+    always@(posedge clk) begin
+    if(rst) begin
+        new_x <= 0;
+        new_y <= 0;
+        end
+    end
+    always@(mux_comp_x, mux_comp_y) begin
+        reg_x <= mux_comp_x;
+        reg_y <= mux_comp_y;
+    end
+    
+endmodule
+
+
+
+
+
